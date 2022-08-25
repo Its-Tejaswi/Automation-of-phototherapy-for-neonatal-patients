@@ -24,41 +24,26 @@ max_YCrCb = np.array([255,173,127],np.uint8)
 
 ################################################
 
-account_sid = 'ACbb455e0cbc127e2400b55bcb71d6f957'
-auth_token = '74e231cba3ae2510dbb92310b6d7329d'
+account_sid = 'This is private'
+auth_token = 'This is private'
 client = Client(account_sid, auth_token)
 
 
 
 cam = cv2.VideoCapture(0)
-# time.sleep(2)
+
 result, image = cam.read()
 time.sleep(2)
 if result:
-	#cv2.imshow("image", image)
 	cv2.imwrite("My.png", image)
 
-#--------------------------------------------Code----------------------------------------------------
-#To quit from while loop
+#--------------------------------------------Code----------------------------------------------
+
 sourceImage = cv2.imread('jaundice1.jpg')
-#sourceImage = cv2.imread('My.png')
-#cv2.imshow('original',sourceImage)
-
 imageYCrCb = cv2.cvtColor(sourceImage,cv2.COLOR_BGR2YCR_CB)
-
-#Image Converted From rgb to YCrCb
-
-#cv2.imshow('fromRGB2YCrCb',imageYCrCb)
 
 # Using inrange function to detect skinregion by giving max and min value of YCrCb
 skinRegion = cv2.inRange(imageYCrCb,min_YCrCb,max_YCrCb)
-
-#Morphology
-
-# se = np.ones((1,1), dtype='uint8')
-# image_close = cv2.morphologyEx(skinRegion, cv2.MORPH_CLOSE, se)
-# cv2.imshow('Morphology', image_close)
-#
 
 # Do contour detection on skin region
 contours, hierarchy = cv2.findContours(skinRegion, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -76,24 +61,16 @@ for i, c in enumerate(contours):
 toRGB = cv2.cvtColor(imageYCrCb,cv2.COLOR_YCrCb2RGB)
 #cv2.imshow('rgb', toRGB)
 reqd_image = cv2.bitwise_and(toRGB, toRGB, mask=skinRegion)
-
-
-
 R,G,B = cv2.split(toRGB)
-#print (contours)
-
 #for Blue Intensity
-
 print("Blue color Intensity")
 print(float(np.average(B)))
 Y,Cr,Cb = cv2.split(imageYCrCb)
-
 #for Intensity of Cb
-
 print("for intensity of Cb")
 print(float(np.average(Cb)))
 #Condition to Check For Jaundice
-x = 0#for jaundice not detect
+x = 0
 y=0
 if np.average(B) < 110 and np.average(Cb) < 110:
     print("jaundice detected!!!")
@@ -101,8 +78,8 @@ if np.average(B) < 110 and np.average(Cb) < 110:
     if(x==1):
         message = client.messages.create(
             body='Your ward is tested jaundice positive on {0} dated: {1}'.format(current_time, current_date),
-            from_='+17473195024',
-            to='+91 74839 91895'
+            from_='xxxxxxxxxxx',
+            to='xxxxxxxxxxx'
         )
 else:
     x = 0
@@ -110,12 +87,9 @@ else:
     if(x==0):
         message = client.messages.create(
             body='Your ward is tested jaundice negative on {0} dated {1}'.format(current_time,current_date),
-            from_='+17473195024',
-            to='+91 74839 91895'
+            from_='xxxxxxxxxxx',
+            to='xxxxxxxxxxxxx'
         )
-
-
-
 if x==1:
     cap = cv2.VideoCapture(0)
     detector = FaceDetector()
@@ -130,9 +104,6 @@ if x==1:
                 print("ON")
             img, bBoxes = detector.findFaces(img)
 
-
-            # print(bBoxes)
-
             cv2.imshow("Video", img)
             if cv2.waitKey(20) & KeyPress == ord('q'):
                 break
@@ -146,13 +117,12 @@ if x==1:
                 print("OFF")
                 cap.release()
                 cv2.destroyAllWindows()
-            # KeyPress+=1
             break
 
     now1 = datetime.now()
     end_time = now1.strftime("%H:%M:%S")
     message = client.messages.create(
         body='Your ward was tested +ve at {0} and process was completed at {1}'.format(current_time, end_time),
-        from_='+17473195024',
-        to='+91 74839 91895'
+        from_='xxxxxxxxxxxx',
+        to=' xxxxxxxxxxxx'
     )
